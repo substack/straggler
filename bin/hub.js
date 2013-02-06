@@ -8,20 +8,20 @@ var auth = require('../lib/auth')(
 );
 
 var feed = through();
-var writers = [];
+var keys = [];
 
 var server = http.createServer(function (req, res) {
     if (req.url === '/read') {
         req.pipe(auth("r", function (stream) {
             var stringify = JSONStream.stringify();
             stringify.pipe(stream);
-            stringify.write({ writers: writers });
+            stringify.write({ keys: auth.keys });
             feed.pipe(stringify);
         })).pipe(res);
     }
     else if (req.url === '/write') {
         req.pipe(auth("w", function (stream) {
-            stream.pipe(through(write)).pipe(feed);
+            stream.pipe(through(write)).pipe(feed, { end: false });
             
             function write (msg) {
                 var index = auth.keys.indexOf(stream.key);
