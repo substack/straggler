@@ -8,7 +8,6 @@ var auth = require('../lib/auth')(
 );
 
 var feed = through();
-var keys = [];
 
 var server = http.createServer(function (req, res) {
     if (req.url === '/read') {
@@ -24,8 +23,8 @@ var server = http.createServer(function (req, res) {
             stream.pipe(through(write)).pipe(feed, { end: false });
             
             function write (msg) {
-                var index = auth.keys.indexOf(stream.key);
-                this.emit('data', [ index, msg.toString('base64') ]);
+                var r = auth.keys[stream.key];
+                this.emit('data', [ r.index, msg.toString('base64') ]);
             }
         })).pipe(res);
     }
