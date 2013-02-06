@@ -1,28 +1,33 @@
-var net = require('net');
-var secure = require('secure-peer');
-var peer = secure(require('./keys.json'));
-var authorized = require('./authorized.json').map(normalizeKey);
+var http = require('http');
 var through = require('through');
+var JSONStream = require('JSONStream');
 
-var server = net.createServer(function (cipherStream) {
-    var sec = peer(function (stream) {
-        stream.pipe(process.stdout);
-    });
-    sec.on('identify', function (id) {
-        if (authorized.indexOf(normalizeKey(id.key.public)) < 0) {
-            id.reject();
-        }
-        else id.accept();
-    });
-    sec.pipe(cipherStream).pipe(sec);
+var auth = require('../lib/auth')(
+    require('./keys.json'),
+    require('./authorized.json')
+);
+
+var feed = through();
+var writers = [];
+
+var server = http.createServer(function (req, res) {
+    if (req.url === '/read') {
+        req.pipe(auth("r", function (stream) {
+            var stringify = JSONStream.stringify();
+            stringify.pipe(stream);
+            stringify.write({ writers: writers });
+            feed.pipe(stringify);
+        })).pipe(res);
+    }
+    else if (req.url === '/write') {
+        req.pipe(auth("w", function (stream) {
+            stream.pipe(through(write)).pipe(feed);
+            
+            function write (msg) {
+                var index = auth.keys.indexOf(stream.key);
+                this.emit('data', [ index, msg.toString('base64') ]);
+            }
+        })).pipe(res);
+    }
 });
 server.listen(5000);
-
-function normalizeKey (key) {
-    return key
-        .split('\n')
-        .filter(function (line) { return !/^-----/.test(line) })
-        .map(function (line) { return line.replace(/\s+/g, '') })
-        .join('')
-    ;
-}
