@@ -2,14 +2,14 @@ var secure = require('secure-peer');
 var request = require('request');
 var JSONStream = require('JSONStream');
 var through = require('through');
+var pause = require('pause-stream');
 
 var createHub = require('./lib/hub');
 
-module.exports = function (keys) {
-    return new Lousy(keys);
-};
+module.exports = Lousy;
 
 function Lousy (keys) {
+    if (!(this instanceof Lousy)) return new Lousy(keys);
     this.keys = keys;
 }
 
@@ -60,11 +60,14 @@ Lousy.prototype.read = function (uri, cb) {
 
 Lousy.prototype.write = function (uri) {
     var peer = secure(this.keys);
-    var sec = peer(function (stream) { tr.pipe(stream) });
+    var sec = peer(function (stream) {
+        p.pipe(stream);
+        p.resume();
+    });
     
     var r = request.post(uri + '/write');
     sec.pipe(r).pipe(sec);
     
-    var tr = through();
-    return tr;
+    var p = pause();
+    return p.pause();
 };
