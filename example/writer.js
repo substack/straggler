@@ -1,10 +1,4 @@
-var secure = require('secure-peer');
-var peer = secure(require('./writer.json'));
-
-var request = require('request');
-var r = request.post('http://localhost:5000/write');
-
-var sec = peer(function (stream) {
-    stream.end('beep boop\n');
-});
-sec.pipe(r).pipe(sec);
+var lousy = require('lousy');
+var ly = lousy(require('./writer.json'));
+var w = ly.write('http://localhost:5000');
+w.write('beep boop\n');
