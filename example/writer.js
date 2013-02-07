@@ -1,5 +1,5 @@
 var secure = require('secure-peer');
-var peer = secure(require('./client.json'));
+var peer = secure(require('./writer.json'));
 
 var request = require('request');
 var r = request.post('http://localhost:5000/write');
