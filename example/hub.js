@@ -1,5 +1,5 @@
 var lousy = require('../');
-var ly = lousy(require('./keys.json'));
+var ly = lousy(require('./hub.json'));
 var hub = ly.createHub(require('./authorized.json'));
 
 var http = require('http');
