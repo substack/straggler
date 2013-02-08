@@ -56,3 +56,59 @@ $ node writer.js
 beep boop
 $ 
 ```
+
+# methods
+
+``` js
+var lousy = require('lousy')
+```
+
+## var ly = lousy(keys)
+
+Create a new lousy instance `ly` from `keys`, a public/private keypair generated
+by [rsa-json](https://github.com/substack/rsa-json).
+
+## var hub = ly.createHub(authorized)
+
+###  hub.handle(req, res)
+
+Handle a request from a `(req, res)` pair from an http server.
+
+### hub.test(url)
+
+Test a `req.url` string, returning the handler that should fire or `undefined`
+if the route doesn't match anything.
+
+## var reader = ly.read(uri, cb)
+
+Return a function `reader` to create named streams.
+
+`cb(err, keys)` fires with `keys`, and object that maps public key strings to
+the user objects set up by `createHub()`.
+
+### reader(name)
+
+Return a readable stream of data from the writer given by `name`.
+
+## ly.write(uri)
+
+Return a writable stream of data from the writer given by `name`.
+
+# attributes
+
+## reader.keys
+
+populated with the authorized key data from `createHub(authorized)` after the
+connection is established
+
+# install
+
+With [npm](https://npmjs.org) do:
+
+```
+npm install lousy
+```
+
+# license
+
+MIT

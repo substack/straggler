@@ -22,6 +22,11 @@ Lousy.prototype.createHub = function (authorized) {
 
 Lousy.prototype.read = function (uri, cb) {
     var r = request.post(uri + '/read');
+    r.on('error', function (err) {
+        if (cb) cb(err);
+        cb = function () {};
+    });
+    
     var parser = JSONStream.parse([ true ]);
     var indexed;
     var streams = {};
@@ -42,7 +47,7 @@ Lousy.prototype.read = function (uri, cb) {
                 return acc;
             }, {});
             reader.keys = msg.keys;
-            if (cb) cb(msg.keys);
+            if (cb) cb(null, msg.keys);
         }
     }));
     
