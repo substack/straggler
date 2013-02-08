@@ -2,6 +2,8 @@
 
 aggregate text streams
 
+[![build status](https://secure.travis-ci.org/substack/straggler.png)](http://travis-ci.org/substack/straggler)
+
 # api example
 
 First generate keypairs for your hub, viewer, and writer
