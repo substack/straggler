@@ -30,17 +30,9 @@ Straggler.prototype.read = function (uri, cb) {
     var parser = JSONStream.parse([ true ]);
     var indexed;
     var streams = {};
-    var streamCount = 0;
     
     function createStream (name) {
-        var s = streams[name] = through();
-        streamCount ++;
-        s.once('end', function () {
-            process.nextTick(function () {
-                if (--streamCount === 0) sec.end();
-            });
-        });
-        return s;
+        return streams[name] = through();
     }
     
     parser.pipe(through(function (msg) {
@@ -70,6 +62,8 @@ Straggler.prototype.read = function (uri, cb) {
     var reader = function (name) {
         return streams[name] || createStream(name);
     };
+    reader.secure = sec;
+    reader.end = sec.end.bind(sec);
     return reader;
 };
 

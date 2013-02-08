@@ -52,7 +52,7 @@ function viewer (t) {
     var data = '';
     rs.on('data', function (buf) { data += buf });
     
-    t.on('end', function () { rs.end() });
+    t.on('end', function () { read.end() });
 }
 
 function writer (t) {
