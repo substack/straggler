@@ -1,6 +1,6 @@
 # lousy
 
-aggregate stdout output across processes
+aggregate text streams
 
 # api example
 
