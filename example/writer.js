@@ -1,4 +1,4 @@
-var lousy = require('lousy');
-var ly = lousy(require('./writer.json'));
-var w = ly.write('http://localhost:5000');
+var straggler = require('../');
+var st = straggler(require('./writer.json'));
+var w = st.write('http://localhost:5000');
 w.end('beep boop\n');

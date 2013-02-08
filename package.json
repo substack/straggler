@@ -1,5 +1,5 @@
 {
-    "name": "lousy",
+    "name": "straggler",
     "version": "0.0.0",
     "description": "aggregate text streams",
     "main": "index.js",
@@ -8,7 +8,7 @@
         "pause-stream": "~0.0.9",
         "request": "~2.12.0",
         "secure-peer": "~0.2.0",
-        "through": "~2.1.0",
+        "through": "~2.1.0"
     },
     "devDependencies": {
         "tap": "~0.3.0"
@@ -18,9 +18,9 @@
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/substack/lousy.git"
+        "url": "git://github.com/substack/straggler.git"
     },
-    "homepage": "https://github.com/substack/lousy",
+    "homepage": "https://github.com/substack/straggler",
     "keywords": [
         "stream",
         "text",

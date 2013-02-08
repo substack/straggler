@@ -6,21 +6,21 @@ var pause = require('pause-stream');
 
 var createHub = require('./lib/hub');
 
-module.exports = Lousy;
+module.exports = Straggler;
 
-function Lousy (keys) {
-    if (!(this instanceof Lousy)) return new Lousy(keys);
+function Straggler (keys) {
+    if (!(this instanceof Straggler)) return new Straggler(keys);
     this.keys = keys;
 }
 
-Lousy.prototype.createHub = function (authorized) {
+Straggler.prototype.createHub = function (authorized) {
     return createHub({
         keys: this.keys,
         authorized: authorized
     });
 };
 
-Lousy.prototype.read = function (uri, cb) {
+Straggler.prototype.read = function (uri, cb) {
     var r = request.post(uri + '/read');
     r.on('error', function (err) {
         if (cb) cb(err);
@@ -63,7 +63,7 @@ Lousy.prototype.read = function (uri, cb) {
     return reader;
 };
 
-Lousy.prototype.write = function (uri) {
+Straggler.prototype.write = function (uri) {
     var peer = secure(this.keys);
     var sec = peer(function (stream) {
         p.pipe(stream);
