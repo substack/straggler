@@ -21,8 +21,8 @@ Straggler.prototype.createHub = function (authorized) {
 };
 
 Straggler.prototype.read = function (uri, cb) {
-    var r = request.post(uri + '/read');
-    r.on('error', function (err) {
+    var req = request.post(uri + '/read');
+    req.on('error', function (err) {
         if (cb) cb(err);
         cb = function () {};
     });
@@ -30,6 +30,18 @@ Straggler.prototype.read = function (uri, cb) {
     var parser = JSONStream.parse([ true ]);
     var indexed;
     var streams = {};
+    var streamCount = 0;
+    
+    function createStream (name) {
+        var s = streams[name] = through();
+        streamCount ++;
+        s.once('end', function () {
+            process.nextTick(function () {
+                if (--streamCount === 0) sec.end();
+            });
+        });
+        return s;
+    }
     
     parser.pipe(through(function (msg) {
         if (Array.isArray(msg)) {
@@ -37,7 +49,7 @@ Straggler.prototype.read = function (uri, cb) {
             var buf = Buffer(msg[1], 'base64');
             
             var s = streams[r.name]
-            if (!s) s = streams[r.name] = through();
+            if (!s) s = createStream(r.name);
             s.write(buf);
         }
         else if (msg && typeof msg === 'object' && msg.keys) {
@@ -53,12 +65,10 @@ Straggler.prototype.read = function (uri, cb) {
     
     var peer = secure(this.keys);
     var sec = peer(function (stream) { stream.pipe(parser) });
-    sec.pipe(r).pipe(sec);
+    sec.pipe(req).pipe(sec);
     
     var reader = function (name) {
-        var s = streams[name];
-        if (!s) s = streams[name] = through();
-        return s;
+        return streams[name] || createStream(name);
     };
     return reader;
 };

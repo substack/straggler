@@ -52,12 +52,10 @@ function viewer (t) {
     var data = '';
     rs.on('data', function (buf) { data += buf });
     
-    t.on('end', function () { rs.close() });
+    t.on('end', function () { rs.end() });
 }
 
 function writer (t) {
-    t.on('end', function () { ws.end() });
-    
     var st = straggler(config.writer);
     var port = server.address().port;
     var ws = st.write('http://localhost:' + port);
