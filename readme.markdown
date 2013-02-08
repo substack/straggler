@@ -86,6 +86,10 @@ Return a function `reader` to create named streams.
 `cb(err, keys)` fires with `keys`, and object that maps public key strings to
 the user objects set up by `createHub()`.
 
+## reader.end()
+
+Close the connection to the hub.
+
 ### reader(name)
 
 Return a readable stream of data from the writer given by `name`.
