@@ -1,6 +1,7 @@
 var http = require('http');
 var fs = require('fs');
 var path = require('path');
+var normalizeKey = require('../lib/normalize_key');
 
 var config = require('./config');
 var VERSION = require('../package.json').version;
@@ -114,6 +115,18 @@ exports.profiles = function (st, hub, argv) {
         })
     ;
     if (files.length) console.log(files.join('\n'));
+};
+
+exports.entry = function (st, hub, argv) {
+    var c = config(argv);
+    c.load(function (err, cfg) {
+        console.log(JSON.stringify({
+            key: normalizeKey(cfg.keys.public),
+            name: c.getProfile(),
+            read: Boolean(argv.r || argv.read),
+            write: Boolean(argv.w || argv.write),
+        }, null, 2));
+    });
 };
 
 exports.hub = function (st, hub, argv) {

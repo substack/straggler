@@ -108,8 +108,12 @@ Config.prototype.loadFile = function (cb) {
     });
 };
 
+Config.prototype.getProfile = function () {
+    return this.argv.profile || env.STRAGGLER_PROFILE || 'default';
+};
+
 Config.prototype.getFile = function () {
-    var profile = this.argv.profile || env.STRAGGLER_PROFILE || 'default';
+    var profile = this.getProfile();
     return this.argv.config || env.STRAGGLER_CONFIG
         || path.join(env.HOME, '.config', 'straggler', profile + '.json')
     ;
