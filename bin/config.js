@@ -28,7 +28,15 @@ Config.prototype.load = function (cb) {
     });
     
     function savePair (pair, cb) {
-        self.save({ keys: pair, hubs: {} }, function (err) {
+        var name = self.getProfile();
+        if (name === 'default') name = process.env.USER;
+        
+        var cfg = {
+          keys: pair,
+          name: name,
+          hubs: {}
+        };
+        self.save(cfg, function (err) {
             if (err) return cb(err);
             loadFile(cb);
         });
@@ -109,7 +117,9 @@ Config.prototype.loadFile = function (cb) {
 };
 
 Config.prototype.getProfile = function () {
-    return this.argv.profile || env.STRAGGLER_PROFILE || 'default';
+    return this.argv.profile || this.argv.p
+        || env.STRAGGLER_PROFILE || 'default'
+    ;
 };
 
 Config.prototype.getFile = function () {

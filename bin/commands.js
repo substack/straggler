@@ -122,7 +122,7 @@ exports.entry = function (st, hub, argv) {
     c.load(function (err, cfg) {
         console.log(JSON.stringify({
             key: normalizeKey(cfg.keys.public),
-            name: c.getProfile(),
+            name: cfg.name || c.getProfile(),
             read: Boolean(argv.r || argv.read),
             write: Boolean(argv.w || argv.write),
         }, null, 2));

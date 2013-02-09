@@ -104,7 +104,7 @@ OPTIONS:
  
     You can configure a default hub with the `hubs.default` key.
 
-  --profile=PROFILE
+  --profile=PROFILE, -p PROFILE
 
     Use the profile named PROFILE. The default PROFILE is "default".
 

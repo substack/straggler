@@ -16,6 +16,7 @@ function showUsage (code) {
 
 var cmd = argv._.shift() || '';
 if (cmd === 'help' || argv.help || argv.h) return showUsage(0);
+var hubRequired = [ 'write', '', 'list', 'read' ];
 
 config.load(function (err, cfg) {
     if (err) {
@@ -29,7 +30,7 @@ config.load(function (err, cfg) {
         : cfg.hubs && cfg.hubs[cfg.hub]
     ;
     if (!hub) hub = process.env.STRAGGLER_HUB || cfg.hubs.default;
-    if (!hub && cmd !== 'config' && cmd !== 'hub') {
+    if (!hub && hubRequired.indexOf(cmd) >= 0) {
         console.error('--hub not specified and no default hub configured.');
         return process.exit(1);
     }
