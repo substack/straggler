@@ -58,12 +58,16 @@ commands.list = function (st, hub) {
     });
 };
 
-commands.show = function (st, hub) {
-    st.read(hub, function (err, keys) {
-        var names = Object.keys(keys).map(function (key) {
-            return keys[key].name;
-        });
-        console.log(names.join('\n'));
+commands.names = function (st, hub) {
+    var read = st.read(hub, function (err, keys) {
+        var names = Object.keys(keys).reduce(function (acc, key) {
+            acc[keys[key].name] = true;
+            return acc;
+        }, {});
+        names = Object.keys(names);
+        
+        if (names.length) console.log(names.join('\n'));
+        read.end();
     });
 };
 

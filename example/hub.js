@@ -1,6 +1,9 @@
 var straggler = require('../');
+var fs = require('fs');
 var st = straggler(require('./config/hub.json'));
-var hub = st.createHub(require('./config/authorized.json'));
+
+var authFile = process.argv[2] || __dirname + '/config/authorized.json';
+var hub = st.createHub(JSON.parse(fs.readFileSync(authFile)));
 
 var http = require('http');
 var server = http.createServer(function (req, res) {
