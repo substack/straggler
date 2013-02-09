@@ -2,6 +2,9 @@
 
 aggregate text streams
 
+All nodes are authenticated with
+[public key pairs](https://github.com/substack/secure-peer).
+
 [![build status](https://secure.travis-ci.org/substack/straggler.png)](http://travis-ci.org/substack/straggler)
 
 # example

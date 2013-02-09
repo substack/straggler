@@ -1,5 +1,4 @@
 var secure = require('secure-peer');
-var request = require('request');
 var JSONStream = require('JSONStream');
 var through = require('through');
 var pause = require('pause-stream');
@@ -8,6 +7,7 @@ var inherits = require('inherits');
 var EventEmitter = require('events').EventEmitter;
 
 var createHub = require('./lib/hub');
+var post = require('./lib/post');
 
 exports = module.exports = Straggler;
 inherits(Straggler, EventEmitter);
@@ -28,7 +28,7 @@ Straggler.prototype.read = function (uri, cb) {
     var self = this;
     if (!/^https?:/.test(uri)) uri = 'http://' + uri;
     
-    var req = request.post(uri + '/read');
+    var req = post(uri + '/read');
     req.on('error', function (err) {
         if (cb) cb(err);
         else self.emit('error', err)
@@ -85,7 +85,7 @@ Straggler.prototype.write = function (uri) {
         p.resume();
     });
     
-    var r = request.post(uri + '/write');
+    var r = post(uri + '/write');
     sec.pipe(r).pipe(sec);
     
     var p = pause();
