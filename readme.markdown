@@ -59,6 +59,46 @@ beep boop
 $ 
 ```
 
+# usage
+
+```
+usage:
+
+  straggler write {OPTIONS}
+
+    Pipe incoming stdin to the remote hub.
+
+  straggler list {OPTIONS}
+
+    print a list of all the connected readable streams
+
+  straggler read NAME {OPTIONS}
+
+    print a stream of data from NAME to stdout
+
+  straggler config { get KEY | set KEY VALUE | list }
+
+    query and modify configuration values
+
+  straggler hub AUTH.JSON {--port=PORT}
+
+    Spin up a new straggler http server hub with with authorized keys from
+    AUTH.JSON.
+
+OPTIONS:
+
+  --hub=HUB
+ 
+    Connect to the hub at the HUB url.
+ 
+    You can configure a default hub with the `hubs.default` key.
+
+  --profile=PROFILE
+
+    Use the profile named PROFILE. The default PROFILE is "default".
+
+```
+
 # methods
 
 ``` js

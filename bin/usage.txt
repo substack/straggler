@@ -1,27 +1,35 @@
-straggler { FILE | - }
+usage:
 
-  read a stream of text from stdin or `tail -f` a file
+  straggler write {OPTIONS}
 
-straggler list
+    Pipe incoming stdin to the remote hub.
 
-  print a list of all the connected readable streams
+  straggler list {OPTIONS}
 
-straggler read NAME
+    print a list of all the connected readable streams
 
-  show all messages
+  straggler read NAME {OPTIONS}
 
-straggler config { get KEY | set KEY VALUE | list }
+    print a stream of data from NAME to stdout
 
-  query and modify configuration values
+  straggler config { get KEY | set KEY VALUE | list }
 
-straggler hub
+    query and modify configuration values
 
-  spin up a new straggler http server hub
+  straggler hub AUTH.JSON {--port=PORT}
 
-straggler shell
+    Spin up a new straggler http server hub with with authorized keys from
+    AUTH.JSON.
 
-  log an entire subshell session
-  
-straggler authorize { KEYFILE | - }
+OPTIONS:
 
-  authorize a public key from keyfile or stdin
+  --hub=HUB
+ 
+    Connect to the hub at the HUB url.
+ 
+    You can configure a default hub with the `hubs.default` key.
+
+  --profile=PROFILE
+
+    Use the profile named PROFILE. The default PROFILE is "default".
+
