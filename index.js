@@ -6,7 +6,7 @@ var pause = require('pause-stream');
 
 var createHub = require('./lib/hub');
 
-module.exports = Straggler;
+exports = module.exports = Straggler;
 
 function Straggler (keys) {
     if (!(this instanceof Straggler)) return new Straggler(keys);

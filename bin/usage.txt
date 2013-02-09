@@ -1,0 +1,27 @@
+straggler { FILE | - }
+
+  read a stream of text from stdin or `tail -f` a file
+
+straggler list
+
+  print a list of all the connected readable streams
+
+straggler read NAME
+
+  show all messages
+
+straggler config { get KEY | set KEY VALUE | list }
+
+  query and modify configuration values
+
+straggler hub
+
+  spin up a new straggler http server hub
+
+straggler shell
+
+  log an entire subshell session
+  
+straggler authorize { KEYFILE | - }
+
+  authorize a public key from keyfile or stdin
