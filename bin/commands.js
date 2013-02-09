@@ -1,6 +1,8 @@
-var config = require('./config');
 var http = require('http');
 var fs = require('fs');
+var path = require('path');
+
+var config = require('./config');
 var VERSION = require('../package.json').version;
 
 exports.list = function (st, hub) {
@@ -98,6 +100,20 @@ exports.config = function (st, hub, argv) {
         '  straggler config list',
         ''
     ].join('\n'));
+};
+
+exports.profiles = function (st, hub, argv) {
+    var c = config(argv);
+    var dir = path.dirname(c.getFile());
+    var files = fs.readdirSync(dir)
+        .filter(function (file) {
+            return /\.json$/.test(file)
+        })
+        .map(function (file) {
+            return path.basename(file).replace(/\.json$/, '')
+        })
+    ;
+    if (files.length) console.log(files.join('\n'));
 };
 
 exports.hub = function (st, hub, argv) {

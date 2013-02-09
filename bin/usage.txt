@@ -6,15 +6,19 @@ usage:
 
   straggler list {OPTIONS}
 
-    print a list of all the connected readable streams
+    Print a list of all the connected readable streams.
 
   straggler read NAME {OPTIONS}
 
-    print a stream of data from NAME to stdout
+    Print a stream of data from NAME to stdout.
 
   straggler config { get KEY | set KEY VALUE | list }
 
-    query and modify configuration values
+    Query and modify configuration values.
+
+  straggler profiles
+
+    List the configured profiles.
 
   straggler hub AUTH.JSON {--port=PORT}
 
