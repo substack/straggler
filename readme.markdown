@@ -100,6 +100,14 @@ Return a readable stream of data from the writer given by `name`.
 
 Return a writable stream of data from the writer given by `name`.
 
+# events
+
+## st.on('keys', function (keys) {})
+
+When `.read()` is called, the `st` instance emits a `'keys'` event with the same
+key data that the `read()` callback gets, mapping public key strings to the user
+objects configured in `createHub()`.
+
 # attributes
 
 ## reader.keys
