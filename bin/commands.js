@@ -21,6 +21,7 @@ exports.list = function (st, hub) {
 exports.write = exports[''] = function (st, hub, argv) {
     var ws = st.write(hub);
     process.stdin.pipe(ws);
+    process.stdin.pipe(process.stdout);
     process.stdin.resume();
 };
 
@@ -52,8 +53,8 @@ exports.config = function (st, hub, argv) {
     if (cmd === 'get') {
         var key = argv._[0];
         return c.get(key, function (err, value) {
-            if (err) return showError(err);
-            console.log(value);
+            if (err) showError(err)
+            else console.log(value)
         });
     }
     
