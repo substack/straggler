@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 var straggler = require('../');
+var fs = require('fs');
 var argv = require('optimist').argv;
+
 var config = require('../lib/config')(argv);
 var commands = require('../lib/commands');
 
@@ -12,7 +14,7 @@ function showUsage (code) {
     });
 }
 
-var cmd = argv._.shift();
+var cmd = argv._.shift() || '';
 if (cmd === 'help' || argv.help || argv.h) return showUsage(0);
 
 config.load(function (err, cfg) {
