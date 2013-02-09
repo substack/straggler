@@ -9,12 +9,19 @@ if (cmd === 'hub') {
     return;
 }
 
+function showUsage (code) {
+    var s = fs.createReadStream(__dirname + '/usage.txt');
+    s.pipe(process.stdout);
+    process.stdout.on('close', function () {
+        process.exit(code);
+    });
+}
+
 loadConfig(argv, function (err, config) {
     if (err) {
         console.error(err);
         return process.exit(1);
     }
-    var st = straggler(config.keys);
     if (!config.hubs) config.hubs = {};
     
     var hub = /:/.test(config.hub)
@@ -27,30 +34,41 @@ loadConfig(argv, function (err, config) {
         return process.exit(1);
     }
     
-    if (cmd === 'list') {
-        var read = st.read(config.hub, function (err, keys) {
-            var names = Object.keys(keys)
-                .map(function (key) { return keys[key] })
-                .filter(function (r) {
-                    return r.connections > 0 && r.write;
-                })
-                .map(function (r) { return r.name })
-            ;
-            if (names.length) console.log(names.join('\n'));
-            read.end();
-        });
-    }
-    else if (cmd === 'show') {
-        st.read(config.hub, function (err, keys) {
-            var names = Object.keys(keys).map(function (key) {
-                return keys[key].name;
-            });
-            console.log(names.join('\n'));
-        });
-    }
-    else if (cmd === 'read') {
-        var name = argv._[0];
-        var read = st.read(config.hub);
-        read(name).pipe(process.stdout);
-    }
+    var fn = commands[cmd];
+    if (!fn) return showUsage(1);
+    
+    var st = straggler(config.keys);
+    fn(st, hub);
 });
+
+var commands = {};
+
+commands.list = function (st, hub) {
+    var read = st.read(hub);
+    st.on('keys', function (keys) {
+        var names = Object.keys(keys)
+            .map(function (key) { return keys[key] })
+            .filter(function (r) {
+                return r.connections > 0 && r.write;
+            })
+            .map(function (r) { return r.name })
+        ;
+        if (names.length) console.log(names.join('\n'));
+        read.end();
+    });
+};
+
+commands.show = function (st, hub) {
+    st.read(hub, function (err, keys) {
+        var names = Object.keys(keys).map(function (key) {
+            return keys[key].name;
+        });
+        console.log(names.join('\n'));
+    });
+};
+
+commands.read = function (st, hub) {
+    var name = argv._[0];
+    var read = st.read(hub);
+    read(name).pipe(process.stdout);
+};

@@ -4,9 +4,13 @@ var JSONStream = require('JSONStream');
 var through = require('through');
 var pause = require('pause-stream');
 
+var inherits = require('inherits');
+var EventEmitter = require('events').EventEmitter;
+
 var createHub = require('./lib/hub');
 
 exports = module.exports = Straggler;
+inherits(Straggler, EventEmitter);
 
 function Straggler (keys) {
     if (!(this instanceof Straggler)) return new Straggler(keys);
@@ -21,9 +25,11 @@ Straggler.prototype.createHub = function (authorized) {
 };
 
 Straggler.prototype.read = function (uri, cb) {
+    var self = this;
     var req = request.post(uri + '/read');
     req.on('error', function (err) {
         if (cb) cb(err);
+        else self.emit('error', err)
         cb = function () {};
     });
     
@@ -52,6 +58,7 @@ Straggler.prototype.read = function (uri, cb) {
             }, {});
             reader.keys = msg.keys;
             if (cb) cb(null, msg.keys);
+            self.emit('keys', msg.keys);
         }
     }));
     
