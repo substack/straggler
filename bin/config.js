@@ -2,7 +2,6 @@ var fs = require('fs');
 var path = require('path');
 var mkdirp = require('mkdirp');
 var createKeys = require('rsa-json');
-var normalizeKey = require('./normalize_key');
 var env = process.env;
 
 module.exports = Config;

@@ -3,8 +3,8 @@ var straggler = require('../');
 var fs = require('fs');
 var argv = require('optimist').argv;
 
-var config = require('../lib/config')(argv);
-var commands = require('../lib/commands');
+var config = require('./config')(argv);
+var commands = require('./commands');
 
 function showUsage (code) {
     var s = fs.createReadStream(__dirname + '/usage.txt');
