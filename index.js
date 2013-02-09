@@ -26,6 +26,8 @@ Straggler.prototype.createHub = function (authorized) {
 
 Straggler.prototype.read = function (uri, cb) {
     var self = this;
+    if (!/^https?:/.test(uri)) uri = 'http://' + uri;
+    
     var req = request.post(uri + '/read');
     req.on('error', function (err) {
         if (cb) cb(err);
@@ -75,6 +77,8 @@ Straggler.prototype.read = function (uri, cb) {
 };
 
 Straggler.prototype.write = function (uri) {
+    if (!/^https?:/.test(uri)) uri = 'http://' + uri;
+    
     var peer = secure(this.keys);
     var sec = peer(function (stream) {
         p.pipe(stream);

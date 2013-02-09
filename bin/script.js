@@ -1,14 +1,8 @@
 #!/usr/bin/env node
 var straggler = require('../');
 var argv = require('optimist').argv;
-var loadConfig = require('../lib/config');
+var config = require('../lib/config')(argv);
 var commands = require('../lib/commands');
-
-var cmd = argv._.shift();
-if (cmd === 'hub') {
-    console.error('not yet implemented');
-    return;
-}
 
 function showUsage (code) {
     var s = fs.createReadStream(__dirname + '/usage.txt');
@@ -18,19 +12,22 @@ function showUsage (code) {
     });
 }
 
-loadConfig(argv, function (err, config) {
+var cmd = argv._.shift();
+if (cmd === 'help' || argv.help || argv.h) return showUsage(0);
+
+config.load(function (err, cfg) {
     if (err) {
-        console.error(err);
+        console.error(String(err));
         return process.exit(1);
     }
-    if (!config.hubs) config.hubs = {};
+    if (!cfg.hubs) cfg.hubs = {};
     
-    var hub = /:/.test(config.hub)
-        ? config.hub
-        : config.hubs && config.hubs[config.hub]
+    var hub = /:/.test(cfg.hub)
+        ? cfg.hub
+        : cfg.hubs && cfg.hubs[cfg.hub]
     ;
-    if (!hub) hub = process.env.STRAGGLER_HUB || config.hubs.default;
-    if (!hub) {
+    if (!hub) hub = process.env.STRAGGLER_HUB || cfg.hubs.default;
+    if (!hub && cmd !== 'config' && cmd !== 'hub') {
         console.error('--hub not specified and no default hub configured.');
         return process.exit(1);
     }
@@ -38,6 +35,6 @@ loadConfig(argv, function (err, config) {
     var fn = commands[cmd];
     if (!fn) return showUsage(1);
     
-    var st = straggler(config.keys);
+    var st = straggler(cfg.keys);
     fn(st, hub, argv);
 });
