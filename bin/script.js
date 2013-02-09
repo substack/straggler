@@ -2,6 +2,7 @@
 var straggler = require('../');
 var argv = require('optimist').argv;
 var loadConfig = require('../lib/config');
+var commands = require('../lib/commands');
 
 var cmd = argv._.shift();
 if (cmd === 'hub') {
@@ -38,41 +39,5 @@ loadConfig(argv, function (err, config) {
     if (!fn) return showUsage(1);
     
     var st = straggler(config.keys);
-    fn(st, hub);
+    fn(st, hub, argv);
 });
-
-var commands = {};
-
-commands.list = function (st, hub) {
-    var read = st.read(hub);
-    st.on('keys', function (keys) {
-        var names = Object.keys(keys)
-            .map(function (key) { return keys[key] })
-            .filter(function (r) {
-                return r.connections > 0 && r.write;
-            })
-            .map(function (r) { return r.name })
-        ;
-        if (names.length) console.log(names.join('\n'));
-        read.end();
-    });
-};
-
-commands.names = function (st, hub) {
-    var read = st.read(hub, function (err, keys) {
-        var names = Object.keys(keys).reduce(function (acc, key) {
-            acc[keys[key].name] = true;
-            return acc;
-        }, {});
-        names = Object.keys(names);
-        
-        if (names.length) console.log(names.join('\n'));
-        read.end();
-    });
-};
-
-commands.read = function (st, hub) {
-    var name = argv._[0];
-    var read = st.read(hub);
-    read(name).pipe(process.stdout);
-};
