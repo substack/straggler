@@ -2,6 +2,8 @@
 
 aggregate text streams
 
+because text is a [universal interface](https://en.wikipedia.org/wiki/Unix_philosophy#McIlroy:_A_Quarter_Century_of_Unix)
+
 All nodes are authenticated with
 [public key pairs](https://github.com/substack/secure-peer).
 
