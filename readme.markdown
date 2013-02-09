@@ -84,6 +84,13 @@ usage:
 
     List the configured profiles.
 
+  straggler entry {-rw}
+
+    Print JSON data to use for the AUTH.JSON used by the hub for the current
+    PROFILE.
+    
+    Specify whether the entry is readable (-r), writable (-w), or both (-rw).
+
   straggler hub AUTH.JSON {--port=PORT}
 
     Spin up a new straggler http server hub with with authorized keys from
