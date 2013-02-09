@@ -109,7 +109,7 @@ Config.prototype.loadFile = function (cb) {
 };
 
 Config.prototype.getFile = function () {
-    var profile = this.argv.env || env.STRAGGLER_PROFILE || 'default';
+    var profile = this.argv.profile || env.STRAGGLER_PROFILE || 'default';
     return this.argv.config || env.STRAGGLER_CONFIG
         || path.join(env.HOME, '.config', 'straggler', profile + '.json')
     ;
