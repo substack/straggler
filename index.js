@@ -2,6 +2,7 @@ var secure = require('secure-peer');
 var JSONStream = require('JSONStream');
 var through = require('through');
 var pause = require('pause-stream');
+var duplexer = require('duplexer');
 
 var inherits = require('inherits');
 var EventEmitter = require('events').EventEmitter;
@@ -90,4 +91,12 @@ Straggler.prototype.write = function (uri) {
     
     var p = pause();
     return p.pause();
+};
+
+Straggler.prototype.duplex = function (uri, cb) {
+    var self = this;
+    var read = self.read(uri, cb);
+    return function (name) {
+        return duplexer(self.write(uri), read(name));
+    };
 };
