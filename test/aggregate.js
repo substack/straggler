@@ -6,7 +6,7 @@ var config = {
     hub: require('./config/hub.json'),
     viewer: require('./config/viewer.json'),
     writer: require('./config/writer.json'),
-    authorized: require('./config/authorized.json')
+    authorized: require('./config/aggregate.json')
 };
 
 var hub = straggler(config.hub).createHub(config.authorized);
