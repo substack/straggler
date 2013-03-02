@@ -31,10 +31,12 @@ function viewer (t) {
     
     var st = straggler(require('./config/viewer.json'));
     var duplex = st.duplex('http://localhost:' + port);
-    var dup = duplex('dup');
+    var dup = duplex('rw');
     
     var data = '';
-    dup.on('data', function (buf) { data += buf });
+    dup.on('data', function (buf) {
+        data += buf;
+    });
     dup.write('xyz');
     
     writer(t);

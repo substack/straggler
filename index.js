@@ -1,8 +1,5 @@
 var secure = require('secure-peer');
-var JSONStream = require('JSONStream');
 var through = require('through');
-var pause = require('pause-stream');
-var duplexer = require('duplexer');
 
 var inherits = require('inherits');
 var EventEmitter = require('events').EventEmitter;
@@ -25,78 +22,47 @@ Straggler.prototype.createHub = function (authorized) {
     });
 };
 
-Straggler.prototype.read = function (uri, cb) {
-    var self = this;
-    if (!/^https?:/.test(uri)) uri = 'http://' + uri;
-    
-    var req = post(uri + '/read');
-    req.on('error', function (err) {
-        if (cb) cb(err);
-        else self.emit('error', err)
-        cb = function () {};
-    });
-    
-    var parser = JSONStream.parse([ true ]);
-    var indexed;
-    var streams = {};
-    
-    function createStream (name) {
-        return streams[name] = through();
-    }
-    
-    parser.pipe(through(function (msg) {
-        if (Array.isArray(msg)) {
-            var r = indexed[msg[0]];
-            var buf = Buffer(msg[1], 'base64');
-            
-            var s = streams[r.name]
-            if (!s) s = createStream(r.name);
-            s.write(buf);
-        }
-        else if (msg && typeof msg === 'object' && msg.keys) {
-            indexed = Object.keys(msg.keys).reduce(function (acc, key) {
-                var r = msg.keys[key];
-                acc[r.index] = r;
-                return acc;
-            }, {});
-            reader.keys = msg.keys;
-            if (cb) cb(null, msg.keys);
-            self.emit('keys', msg.keys);
-        }
-    }));
-    
-    var peer = secure(this.keys);
-    var sec = peer(function (stream) { stream.pipe(parser) });
-    sec.pipe(req).pipe(sec);
-    
-    var reader = function (name) {
-        return streams[name] || createStream(name);
-    };
-    reader.secure = sec;
-    reader.end = sec.end.bind(sec);
-    return reader;
+Straggler.prototype.createReadStream = function (uri, cb) {
+    var opts = { readable: true, writable: false };
+    return this.createStream(uri, opts, cb);
 };
 
-Straggler.prototype.write = function (uri) {
+Straggler.prototype.createWriteStream = function (uri, cb) {
+    var opts = { readable: false, writable: true };
+    return this.createStream(uri, opts, cb);
+};
+
+Straggler.prototype.createStream = function (uri, opts, cb) {
+    var self = this;
     if (!/^https?:/.test(uri)) uri = 'http://' + uri;
+    if (typeof opts === 'function') { cb = opts; opts = {} }
+    if (!opts) opts = {};
+    
+    if (opts.readable === undefined) opts.readable = true;
+    if (opts.writable === undefined) opts.writable = true;
+    
+    var mode = (opts.readable ? 'r' : '') + (opts.writable ? 'w' : '');
+    var type = { r: 'read', w: 'write', rw: 'duplex' }[mode];
+    var req = post(uri + '/' + type);
+    
+    req.on('error', function (err) {
+        if (cb) cb(err);
+        else tr.emit('error', err)
+        cb = null;
+    });
     
     var peer = secure(this.keys);
     var sec = peer(function (stream) {
-        p.pipe(stream);
-        p.resume();
+        if (cb) cb(null, tr);
+        if (opts.readable) stream.pipe(tr);
+        if (opts.writable) tr.pipe(stream);
+        tr.resume();
     });
+    sec.pipe(req).pipe(sec);
     
-    var r = post(uri + '/write');
-    sec.pipe(r).pipe(sec);
-    
-    var p = pause();
-    return p.pause();
-};
-
-Straggler.prototype.duplex = function (uri, cb) {
-    var self = this;
-    var read = self.read(uri, cb);
-    return function (name) {
-        return duplexer(self.write(uri), read(name));
-    };
+    var tr = through();
+    tr.writable = opts.writable;
+    tr.readable = opts.readable;
+    tr.pause();
+    return tr;
 };
