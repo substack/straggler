@@ -15,7 +15,7 @@ var server = http.createServer(function (req, res) {
 });
 
 test('aggregate', function (t) {
-    t.plan(2);
+    t.plan(1);
     
     server.listen(0, function () {
         viewer(t);
@@ -30,39 +30,27 @@ function viewer (t) {
     var port = server.address().port;
     
     var st = straggler(require('./config/viewer.json'));
-    var read = st.read('http://localhost:' + port, function (err, keys) {
-        if (err) t.fail(err);
-        t.deepEqual(
-            Object.keys(keys).sort(),
-            [ config.writer.public, config.viewer.public ]
-                .map(function (s) {
-                    return s.split('\n').slice(1,-2).join('');
-                })
-                .sort()
-        );
-        
-        writer(t);
-        
-        setTimeout(function () {
-            t.equal(data, 'beep boop\n');
-        }, 200);
-    });
-    var rs = read('writer');
+    var rs = st.createReadStream('http://localhost:' + port + '/s');
+    rs.on('open', function () { writer(t) });
+    
+    setTimeout(function () {
+        t.equal(data, 'beep boop\n');
+    }, 200);
     
     var data = '';
     rs.on('data', function (buf) { data += buf });
     
-    t.on('end', function () { read.end() });
+    t.on('end', function () { rs.end() });
 }
 
 function writer (t) {
     var st = straggler(config.writer);
     var port = server.address().port;
-    var ws = st.write('http://localhost:' + port);
+    var ws = st.createWriteStream('http://localhost:' + port + '/s');
     
     ws.write('beep ');
     
     setTimeout(function () {
         ws.end('boop\n');
-    }, 100);
+    }, 50);
 }

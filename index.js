@@ -53,9 +53,12 @@ Straggler.prototype.createStream = function (uri, opts, cb) {
     
     var peer = secure(this.keys);
     var sec = peer(function (stream) {
+        tr.on('close', stream.end.bind(stream));
+        
         if (cb) cb(null, tr);
         if (opts.readable) stream.pipe(tr);
         if (opts.writable) tr.pipe(stream);
+        tr.emit('open');
         tr.resume();
     });
     sec.pipe(req).pipe(sec);
