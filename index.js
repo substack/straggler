@@ -61,8 +61,8 @@ Straggler.prototype.createStream = function (uri, opts, cb) {
     sec.pipe(req).pipe(sec);
     
     var tr = through();
-    tr.writable = opts.writable;
-    tr.readable = opts.readable;
+    tr.writable = opts.readable;
+    tr.readable = opts.writable;
     tr.pause();
     return tr;
 };
