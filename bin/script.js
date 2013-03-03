@@ -32,27 +32,6 @@ var keys = JSON.parse(fs.readFileSync(argv.k || argv.keys));
 var st = straggler(keys);
 var uri = argv._[0];
 
-if ((argv.r && argv.w) || argv.rw) {
-    var ds = st.createStream(uri);
-    ds.pipe(process.stdout);
-    process.stdin.pipe(ds);
-    process.stdin.resume();
-    return;
-}
-
-if (argv.w) {
-    var ws = st.createWriteStream(uri);
-    process.stdin.pipe(ws);
-    process.stdin.resume();
-    return;
-}
-
-if (argv.r) {
-    var rs = st.createReadStream(uri);
-    rs.pipe(process.stdout);
-    return;
-}
-
 if (argv.l || argv.listen) {
     var port = argv.l || argv.listen;
     var file = argv.a || argv.authorized;
@@ -72,6 +51,27 @@ if (argv.l || argv.listen) {
         res.end('straggler version ' + VERSION);
     });
     server.listen(port);
+    return;
+}
+
+if (argv.w && !argv.r) {
+    var ws = st.createWriteStream(uri);
+    process.stdin.pipe(ws);
+    process.stdin.resume();
+    return;
+}
+
+if (argv.r && !argv.w) {
+    var rs = st.createReadStream(uri);
+    rs.pipe(process.stdout);
+    return;
+}
+
+if ((argv.r && argv.w) || argv.rw || true) {
+    var ds = st.createStream(uri);
+    ds.pipe(process.stdout);
+    process.stdin.pipe(ds);
+    process.stdin.resume();
     return;
 }
 

@@ -105,49 +105,22 @@ $
 ```
 usage:
 
-  straggler write {OPTIONS}
-
-    Pipe incoming stdin to the remote hub.
-
-  straggler list {OPTIONS}
-
-    Print a list of all the connected readable streams.
-
-  straggler read NAME {OPTIONS}
-
-    Print a stream of data from NAME to stdout.
-
-  straggler config { get KEY | set KEY VALUE | list }
-
-    Query and modify configuration values.
-
-  straggler profiles
-
-    List the configured profiles.
-
-  straggler entry {-rw}
-
-    Print JSON data to use for the AUTH.JSON used by the hub for the current
-    PROFILE.
-    
-    Specify whether the entry is readable (-r), writable (-w), or both (-rw).
-
-  straggler hub AUTH.JSON {--port=PORT}
-
-    Spin up a new straggler http server hub with with authorized keys from
-    AUTH.JSON.
-
-OPTIONS:
-
-  --hub=HUB
+  straggler -k keys.json -r URI
  
-    Connect to the hub at the HUB url.
+    Pipe URI to stdout.
  
-    You can configure a default hub with the `hubs.default` key.
+  straggler -k keys.json -w URI
+ 
+    Pipe stdin to URI.
+ 
+  straggler -k keys.json -l PORT -a authorized.json
+ 
+    Create an http server listening on PORT given an authorized key list from
+    `authorized.json`.
+ 
+  straggler -g > keys.json
 
-  --profile=PROFILE, -p PROFILE
-
-    Use the profile named PROFILE. The default PROFILE is "default".
+    Generate a keypair for use with `-k`.
 
 ```
 
