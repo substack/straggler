@@ -29,17 +29,13 @@ test('duplex streams', function (t) {
 function viewer (t) {
     var port = server.address().port;
     
-    var st = straggler(require('./config/viewer.json'));
-    var duplex = st.duplex('http://localhost:' + port);
-    var dup = duplex('rw');
+    var st = straggler(config.viewer);
+    var dup = st.createStream('http://localhost:' + port + '/rw');
     
     var data = '';
-    dup.on('data', function (buf) {
-        data += buf;
-    });
+    dup.on('data', function (buf) { data += buf });
     dup.write('xyz');
-    
-    writer(t);
+    dup.on('open', writer.bind(null, t));
     
     setTimeout(function () {
         t.equal(data, 'xyz ABC');
@@ -50,6 +46,6 @@ function viewer (t) {
 function writer (t) {
     var st = straggler(config.writer);
     var port = server.address().port;
-    var ws = st.write('http://localhost:' + port);
-    ws.end('ABC');
+    var ws = st.createWriteStream('http://localhost:' + port + '/rw');
+    ws.end(' ABC');
 }

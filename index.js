@@ -1,5 +1,6 @@
 var secure = require('secure-peer');
 var through = require('through');
+var duplexer = require('duplexer');
 
 var inherits = require('inherits');
 var EventEmitter = require('events').EventEmitter;
@@ -38,10 +39,10 @@ Straggler.prototype.createStream = function (uri, opts, cb) {
     if (typeof opts === 'function') { cb = opts; opts = {} }
     if (!opts) opts = {};
     
-    if (opts.readable === undefined) opts.readable = true;
-    if (opts.writable === undefined) opts.writable = true;
+    var input = (opts.writable || opts.writable === undefined) && through();
+    var output = (opts.readable || opts.readable === undefined) && through();
     
-    var mode = (opts.readable ? 'r' : '') + (opts.writable ? 'w' : '');
+    var mode = (output ? 'r' : '') + (input ? 'w' : '');
     var type = { r: 'read', w: 'write', rw: 'duplex' }[mode];
     var req = post(uri + '/' + type);
     
@@ -53,19 +54,20 @@ Straggler.prototype.createStream = function (uri, opts, cb) {
     
     var peer = secure(this.keys);
     var sec = peer(function (stream) {
-        tr.on('close', stream.end.bind(stream));
+        if (cb) cb(null, dup);
+        if (output) stream.pipe(output);
+        if (input) input.pipe(stream);
+        dup.on('close', stream.end.bind(stream));
         
-        if (cb) cb(null, tr);
-        if (opts.readable) stream.pipe(tr);
-        if (opts.writable) tr.pipe(stream);
-        tr.emit('open');
-        tr.resume();
+        dup.emit('open');
+        if (input) input.resume();
     });
     sec.pipe(req).pipe(sec);
     
-    var tr = through();
-    tr.writable = opts.readable;
-    tr.readable = opts.writable;
-    tr.pause();
-    return tr;
+    if (input) input.pause();
+    var dup = input && output
+        ? duplexer(input, output)
+        : input || output
+    ;
+    return dup;
 };
