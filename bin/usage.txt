@@ -1,6 +1,7 @@
 usage:
 
-  straggler write {OPTIONS}
+  straggler write NAME {OPTIONS}
+  straggler NAME {OPTIONS}
 
     Pipe incoming stdin to the remote hub.
 
