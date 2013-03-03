@@ -13,7 +13,7 @@ var argv = optimist
     .argv
 ;
 
-if (argv.h || argv.help) return showUsage(0);
+if (argv.h || argv.help || process.argv.length <= 2) return showUsage(0);
 
 if (argv.g || argv.generate) {
     return createKeys(function (err, pair) {

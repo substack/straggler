@@ -21,3 +21,4 @@ usage:
 
     Generate an entry for the authorized.json file with permissions
     (`-r`, `-w`, or `--rw`) for each NAME.
+
