@@ -14,7 +14,10 @@ All nodes are authenticated with
 First generate a quick auth file with keypairs for a reader and a writer:
 
 ```
-echo [$(straggler entry -rp reader),$(straggler entry -wp writer)] > auth.json
+$ straggler -g > hub.json
+$ straggler -g > viewer.json
+$ straggler -g > writer.json
+echo "[$(straggler -e viewer.json),$(straggler -e writer.json)]" > auth.json
 ```
 
 then start up a straggler hub:

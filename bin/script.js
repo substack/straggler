@@ -7,7 +7,8 @@ var createKeys = require('rsa-json');
 var normalizeKey = require('../lib/normalize_key');
 var VERSION = require('../package.json').version;
 
-var argv = require('optimist')
+var optimist = require('optimist');
+var argv = optimist
     .boolean('h', 'help', 'g', 'generate', 'r', 'w', 'rw')
     .argv
 ;
@@ -19,6 +20,16 @@ if (argv.g || argv.generate) {
         if (err) return showError(err);
         console.log(JSON.stringify(pair, null, 2));
     });
+}
+
+if (argv.e && !argv.entry) {
+    var unarg = optimist.argv;
+    var keys = JSON.parse(fs.readFileSync(argv.e || argv.entry));
+    var doc = { key: keys.public };
+    if (unarg.r) doc.read = [].concat(unarg.r);
+    if (unarg.w) doc.write = [].concat(unarg.w);
+    console.log(JSON.stringify(doc, null, 2));
+    return;
 }
 
 if (!argv.k && !argv.keys) {
