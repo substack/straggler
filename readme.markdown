@@ -17,36 +17,29 @@ First generate a quick auth file with keypairs for a reader and a writer:
 $ straggler -g > hub.json
 $ straggler -g > viewer.json
 $ straggler -g > writer.json
-echo "[$(straggler -e viewer.json),$(straggler -e writer.json)]" > auth.json
+$ echo "[`straggler -e viewer.json -r beep`,\
+`straggler -e writer.json -w beep`]" > auth.json
 ```
 
 then start up a straggler hub:
 
 ```
-$ straggler hub auth.json
-straggler listening on port 9600
-```
-
-Configure the default hub to use (or you can specify --hub each time):
-
-```
-$ straggler config set hubs.default http://localhost:9600 -p reader
-$ straggler config set hubs.default http://localhost:9600 -p writer
+$ straggler -k hub.json -a auth.json -l 9600
 ```
 
 Now read data from the writer:
 
 ```
-$ straggler read writer -p reader
+$ straggler -k viewer.json -r http://localhost:9600/beep
 ```
 
 and write data from the writer:
 
 ```
-$ echo beep boop | straggler -p writer
+$ echo beep boop | straggler -k writer.json -w http://localhost:9600/beep
 ```
 
-You should see "beep boop" appear on the `straggler read` command.
+Now you should see "beep boop" appear on the viewer command.
 
 # api example
 
