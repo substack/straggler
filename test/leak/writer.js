@@ -1,7 +1,7 @@
 var straggler = require('../../');
 var st = straggler(require('../config/writer.json'));
 
-var w = st.write('http://localhost:5000');
+var w = st.createWriteStream('http://localhost:5000/stream');
 var iv = setInterval(function () {
     w.write('beep boop\n');
 }, 100);
