@@ -15,7 +15,7 @@ var server = http.createServer(function (req, res) {
 });
 
 test('allowed streams', function (t) {
-    t.plan(5);
+    t.plan(7);
     server.listen(0, function () { rw(t) });
     
     t.on('end', function () {
@@ -35,20 +35,27 @@ function rw (t) {
         t.pass('read from 1');
         var data = '';
         r1.on('data', function (buf) { data += buf });
-        setTimeout(function () {
-            t.equal(data, '111');
-        }, 100);
-        w1.end('111');
+        setTimeout(function () { t.equal(data, 'a') }, 500);
     });
     r2.on('open', function () { t.pass('read from 2') });
-    r3.on('open', function () { t.fail('read from 3 not allowed') });
+    r3.on('open', function () { t.pass('read from 3') });
+    r2.on('data', function () { t.fail('should not get data from 2') });
+    r3.on('data', function () { t.fail('read from 3 not allowed') });
     
     var wst = straggler(config.writer);
-    var w1 = rst.createWriteStream('http://localhost:' + port + '/one');
-    var w2 = rst.createWriteStream('http://localhost:' + port + '/two');
-    var w3 = rst.createWriteStream('http://localhost:' + port + '/three');
+    var w1 = wst.createWriteStream('http://localhost:' + port + '/one');
+    var w2 = wst.createWriteStream('http://localhost:' + port + '/two');
+    var w3 = wst.createWriteStream('http://localhost:' + port + '/three');
     
     w1.on('open', function () { t.pass('write from 1') });
-    w2.on('open', function () { t.fail('write from 2 not allowed') });
+    w1.write('a');
+    w2.on('open', function () { t.pass('write from 2 not allowed') });
+    w2.write('b');
     w3.on('open', function () { t.pass('write from 3') });
+    w3.write('c');
+    
+    t.on('end', function () {
+        w1.end(); w2.end(); w3.end();
+        r1.end(); r2.end(); r3.end();
+    });
 }

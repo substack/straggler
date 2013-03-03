@@ -48,7 +48,7 @@ Straggler.prototype.createStream = function (uri, opts, cb) {
     
     req.on('error', function (err) {
         if (cb) cb(err);
-        else tr.emit('error', err)
+        else dup.emit('error', err)
         cb = null;
     });
     
