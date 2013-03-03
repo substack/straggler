@@ -118,6 +118,10 @@ usage:
 
     Generate a keypair for use with `-k`.
 
+  straggler -e keys.json [{-r,-w,--rw} NAME, ...]
+
+    Generate an entry for the authorized.json file with permissions
+    (`-r`, `-w`, or `--rw`) for each NAME.
 ```
 
 # methods
