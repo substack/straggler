@@ -26,8 +26,12 @@ if (argv.e && !argv.entry) {
     var unarg = optimist.argv;
     var keys = JSON.parse(fs.readFileSync(argv.e || argv.entry));
     var doc = { key: keys.public };
-    if (unarg.r) doc.read = [].concat(unarg.r);
-    if (unarg.w) doc.write = [].concat(unarg.w);
+    if (unarg.r || unarg.rw) {
+        doc.read = [].concat(unarg.r).concat(unarg.rw).filter(Boolean);
+    }
+    if (unarg.w || unarg.rw) {
+        doc.write = [].concat(unarg.w).concat(unarg.rw).filter(Boolean);
+    }
     console.log(JSON.stringify(doc, null, 2));
     return;
 }
