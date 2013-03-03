@@ -33,8 +33,8 @@ var st = straggler(keys);
 
 if ((argv.r && argv.w) || argv.rw) {
     var ds = st.createStream(argv.r || argv.w || argv.rw);
+    ds.pipe(process.stdout);
     process.stdin.pipe(ds);
-    process.stdin.pipe(process.stdout);
     process.stdin.resume();
     return;
 }
@@ -42,7 +42,6 @@ if ((argv.r && argv.w) || argv.rw) {
 if (argv.w) {
     var ws = st.createWriteStream(argv.w);
     process.stdin.pipe(ws);
-    process.stdin.pipe(process.stdout);
     process.stdin.resume();
     return;
 }
