@@ -26,12 +26,25 @@ if (argv.e && !argv.entry) {
     var unarg = optimist.argv;
     var keys = JSON.parse(fs.readFileSync(argv.e || argv.entry));
     var doc = { key: keys.public };
-    if (unarg.r || unarg.rw) {
-        doc.read = [].concat(unarg.r).concat(unarg.rw).filter(Boolean);
-    }
-    if (unarg.w || unarg.rw) {
-        doc.write = [].concat(unarg.w).concat(unarg.rw).filter(Boolean);
-    }
+    
+    var read = [].concat(unarg.r).concat(unarg.rw).filter(Boolean);
+    var write = [].concat(unarg.w).concat(unarg.rw).filter(Boolean);
+    
+    var args = process.argv.slice(2);
+    args.forEach(function (arg, i) {
+        if (arg === '-rw') {
+            var j = read.indexOf(true);
+            if (j >= 0) read[j] = args[i+1];
+        }
+        else if (arg === '-wr') {
+            var j = write.indexOf(true);
+            if (j >= 0) write[j] = args[i+1];
+        }
+    });
+    
+    if (unarg.r || unarg.rw) doc.read = read;
+    if (unarg.w || unarg.rw) doc.write = write;
+    
     console.log(JSON.stringify(doc, null, 2));
     return;
 }
