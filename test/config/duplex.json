@@ -1,13 +1,11 @@
 [
   {
     "key": "MIGRAoGJAbOh2SZ1XYOLjMqh0cKyy9TENl+eWXrTQEdhjIpLe3toSG0Fhzlxtvg/jDz7I1MKrloqIxyfmLVhNs5CXEmiYWhvNcrXQG6FPNeUlGd5yp0JHF75LJkN2Ai4sG98EJvdaFrGFp5MPPycSdWtv2dX/mtaHWWmoAi2w+vPENE7T5SH4+XkWywY6xkCAwEAAQ==",
-    "write": true,
-    "name": "writer"
+    "write": true
   },
   {
     "key": "MIGQAoGIcDhdhdKVbmskZzGrhshqB2J5uq02DU18+OMlp4XN5cor0K98RTnc0TB6pvKinrtwx7/UMY4Zs+u/GZUcukoDmCgRkSnLV0pQO0EJMgx9Yok4ghTcM0smQgtWWe6H38ExKvOFqNcWJeKV3CwqSU/BJF/EeU1iH+p6MeF5mPGuMtmXmNfqqFgQ5wIDAQAB",
     "read": true,
-    "write": true,
-    "name": "rw"
+    "write": true
   }
 ]
