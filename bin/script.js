@@ -8,7 +8,7 @@ var normalizeKey = require('../lib/normalize_key');
 var VERSION = require('../package.json').version;
 
 var argv = require('optimist')
-    .boolean('h', 'help', 'g', 'generate')
+    .boolean('h', 'help', 'g', 'generate', 'r', 'w', 'rw')
     .argv
 ;
 
@@ -30,9 +30,10 @@ if (!argv.k && !argv.keys) {
 
 var keys = JSON.parse(fs.readFileSync(argv.k || argv.keys));
 var st = straggler(keys);
+var uri = argv._[0];
 
 if ((argv.r && argv.w) || argv.rw) {
-    var ds = st.createStream(argv.r || argv.w || argv.rw);
+    var ds = st.createStream(uri);
     ds.pipe(process.stdout);
     process.stdin.pipe(ds);
     process.stdin.resume();
@@ -40,14 +41,14 @@ if ((argv.r && argv.w) || argv.rw) {
 }
 
 if (argv.w) {
-    var ws = st.createWriteStream(argv.w);
+    var ws = st.createWriteStream(uri);
     process.stdin.pipe(ws);
     process.stdin.resume();
     return;
 }
 
 if (argv.r) {
-    var rs = st.createReadStream(argv.r);
+    var rs = st.createReadStream(uri);
     rs.pipe(process.stdout);
     return;
 }
