@@ -1,4 +1,4 @@
-var straggler = require('../');
+var straggler = require('../../');
 var fs = require('fs');
 var st = straggler(require('./config/hub.json'));
 
