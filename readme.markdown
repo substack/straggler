@@ -166,6 +166,8 @@ Create a readable stream `rs` at `uri`.
 Create a straggler `hub` instance to hook into an http server given
 `authorized`, an array of public key and permissions data.
 
+Hubs are always authorized to read and write from themselves.
+
 In this example `authorized` data, the first key can write to the `'/beep'` uri
 and the second key can read from the `'/beep'` uri. `"write"` and `"read"`
 entries are arrays of paths that may be written to or read from respectively
